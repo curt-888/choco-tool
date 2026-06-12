@@ -2394,16 +2394,18 @@ const GameEngine = {
 
   fillBlank(wi,pi){
     // 点击空位 — 将当前选中的音节填入
-    if(!this._selectedPhonics) return; // 没有选中任何音节
+    if(!this._selectedPhonics) return;
     const key=`${wi}-${pi}`;
-    if(this._phonicsFilled.has(key)) return; // 已填
-    if(!this._phonicsBlanks.has(key)) return; // 不是空位
+    if(this._phonicsFilled.has(key)) return;
+    if(!this._phonicsBlanks.has(key)) return;
     
     const choice=this._selectedPhonics;
     this._phonicsFilled.set(key, choice);
     this._selectedPhonics=null;
-    // 播放片段发音
-    Speech.speak(choice.part, 0.6);
+    // 填入后播放整个单词发音
+    const allWords=this.currentSentence.t.replace(/[.,!?;:'"]/g,'').split(/\s+/);
+    const fullWord=allWords[wi]||choice.part;
+    Speech.speak(fullWord, 0.75);
     this.renderFillSentence();
     this.renderPhonicsPool();
   },
@@ -2414,6 +2416,7 @@ const GameEngine = {
     const choices=this._phonicsChoices;
     const filled=this._phonicsFilled;
     const selected=this._selectedPhonics;
+    const allWords=this.currentSentence?this.currentSentence.t.replace(/[.,!?;:'"]/g,'').split(/\s+/):[];
     // 检查哪些已经被选了
     const usedParts=[];
     filled.forEach((v)=>usedParts.push(v));
@@ -2421,7 +2424,8 @@ const GameEngine = {
       const isUsed=usedParts.some(u=>u.wordIdx===c.wordIdx&&u.partIdx===c.partIdx);
       const isSelected=selected&&selected.wordIdx===c.wordIdx&&selected.partIdx===c.partIdx;
       const cls=isSelected?'word-btn-active':isUsed?'word-btn used':'word-btn';
-      return `<span class="${cls}" onclick="GameEngine.selectPhonics(${i})" style="${isSelected?'background:var(--tx);color:#fff;border-color:var(--tx)':''}">${c.part}<span style="font-size:.7em;opacity:.7;margin-left:3px">${c.sound}</span></span>`;
+      const wordHint=allWords[c.wordIdx]||'';
+      return `<span class="${cls}" onclick="GameEngine.selectPhonics(${i})" style="${isSelected?'background:var(--tx);color:#fff;border-color:var(--tx)':''}">${c.part}<span style="font-size:.65em;opacity:.5;margin-left:3px">(${wordHint})</span></span>`;
     }).join('');
     // 提示
     if(selected){
@@ -2439,7 +2443,10 @@ const GameEngine = {
       this._selectedPhonics=null; // 取消选中
     } else {
       this._selectedPhonics=choice; // 选中
-      Speech.speak(choice.part, 0.6); // 点击时先听发音
+      // 播放整个单词发音（拼读片段的字母声无法由TTS模拟，改为播放完整单词让用户感知拼读位置）
+      const allWords=this.currentSentence.t.replace(/[.,!?;:'"]/g,'').split(/\s+/);
+      const fullWord=allWords[choice.wordIdx]||choice.part;
+      Speech.speak(fullWord, 0.75);
     }
     this.renderFillSentence();
     this.renderPhonicsPool();
