@@ -1,6 +1,6 @@
 {
-  "name": "CHOCO TOOL",
-  "short_name": "CHOCO TOOL",
+  "name": "英语学习",
+  "short_name": "英语学习",
   "description": "从零到雅思6.5的英语学习工具",
   "start_url": "./index.html",
   "display": "standalone",
