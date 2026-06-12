@@ -2402,10 +2402,10 @@ const GameEngine = {
     const choice=this._selectedPhonics;
     this._phonicsFilled.set(key, choice);
     this._selectedPhonics=null;
-    // 填入后播放整个单词发音
+    // 填入后慢速播放整个单词
     const allWords=this.currentSentence.t.replace(/[.,!?;:'"]/g,'').split(/\s+/);
     const fullWord=allWords[wi]||choice.part;
-    Speech.speak(fullWord, 0.75);
+    Speech.speak(fullWord, 0.45);
     this.renderFillSentence();
     this.renderPhonicsPool();
   },
@@ -2425,7 +2425,7 @@ const GameEngine = {
       const isSelected=selected&&selected.wordIdx===c.wordIdx&&selected.partIdx===c.partIdx;
       const cls=isSelected?'word-btn-active':isUsed?'word-btn used':'word-btn';
       const wordHint=allWords[c.wordIdx]||'';
-      return `<span class="${cls}" onclick="GameEngine.selectPhonics(${i})" style="${isSelected?'background:var(--tx);color:#fff;border-color:var(--tx)':''}">${c.part}<span style="font-size:.65em;opacity:.5;margin-left:3px">(${wordHint})</span></span>`;
+      return `<span class="${cls}" onclick="GameEngine.selectPhonics(${i})" style="${isSelected?'background:var(--tx);color:#fff;border-color:var(--tx)':''}"><b>${c.part}</b><span style="font-size:.7em;color:${isSelected?'rgba(255,255,255,.6)':'var(--txl)'};margin-left:4px">/ ${c.sound} /</span><span style="font-size:.6em;opacity:.4;margin-left:2px">${wordHint}</span></span>`;
     }).join('');
     // 提示
     if(selected){
@@ -2443,10 +2443,10 @@ const GameEngine = {
       this._selectedPhonics=null; // 取消选中
     } else {
       this._selectedPhonics=choice; // 选中
-      // 播放整个单词发音（拼读片段的字母声无法由TTS模拟，改为播放完整单词让用户感知拼读位置）
+      // 慢速播放整个单词，让用户听到该音节在单词中的实际发音
       const allWords=this.currentSentence.t.replace(/[.,!?;:'"]/g,'').split(/\s+/);
       const fullWord=allWords[choice.wordIdx]||choice.part;
-      Speech.speak(fullWord, 0.75);
+      Speech.speak(fullWord, 0.45);
     }
     this.renderFillSentence();
     this.renderPhonicsPool();
