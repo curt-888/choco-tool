@@ -1,6 +1,6 @@
 {
-  "name": "英语小乐园",
-  "short_name": "英语小乐园",
+  "name": "CHOCO TOOL",
+  "short_name": "CHOCO TOOL",
   "description": "从零到雅思6.5的英语学习工具",
   "start_url": "./index.html",
   "display": "standalone",
